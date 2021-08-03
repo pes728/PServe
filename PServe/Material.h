@@ -7,6 +7,7 @@
 
 #ifndef Material_h
 #define Material_h
+#include "texture.h"
 
 struct hit_record;
 
@@ -20,27 +21,26 @@ inline double schlick(double cosine, double ref_idx) {
 
 class material {
 public:
-    virtual bool scatter(
-                         const ray& r_in, const hit_record& rec, vec3& attenuation, ray& scattered
-                         ) const = 0;
+    virtual bool scatter(const ray& r_in, const hit_record& rec, vec3& attenuation, ray& scattered) const = 0;
 };
 
 
 class lambertian : public material {
 public:
-    lambertian(const vec3& a) : albedo(a) {}
+    lambertian(const vec3& color) : albedo(make_shared<solid_color>(color)) {}
+    lambertian(shared_ptr<texture> a) : albedo(a) {}
     
     virtual bool scatter(
                          const ray& r_in, const hit_record& rec, vec3& attenuation, ray& scattered
                          ) const override {
         vec3 scatter_direction = rec.normal + random_unit_vector();
         scattered = ray(rec.p, scatter_direction, r_in.time());
-        attenuation = albedo;
+        attenuation = albedo->value(rec.u, rec.v, rec.p);
         return true;
     }
     
 public:
-    vec3 albedo;
+    shared_ptr<texture> albedo;
 };
 
 

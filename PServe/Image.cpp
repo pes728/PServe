@@ -16,18 +16,30 @@ void saveImage(std::string dir, std::string filename, int width, int height, con
     stbi_write_bmp((dir + filename + ".bmp").c_str(), width, height, 3, data);
 }
 
-void setPixel(int x, int y, int width, Color c, uint8_t* data){
-    int index = (x + y * width) * 3;
-    data[index + 0] = c.data[0];
-    data[index + 1] = c.data[1];
-    data[index + 2] = c.data[2];
+void setPixel(int x, int y, int width, int height, vec3 c, float* data, bool flip){
+    int index = flip ? (x + (height - 1 - y) * width): (x + y * width);
+    index *= 3;
+    data[index + 0] = c[0];
+    data[index + 1] = c[1];
+    data[index + 2] = c[2];
 }
 
-void init(int width, int height, uint8_t* data, Color c){
+void init(int width, int height, float* data, vec3 c){
     for(int i = 0; i < width * height; i++){
         int index = i * 3;
-        data[index + 0] = c.data[0];
-        data[index + 1] = c.data[1];
-        data[index + 2] = c.data[2];
+        data[index + 0] = c[0];
+        data[index + 1] = c[1];
+        data[index + 2] = c[2];
+    }
+}
+
+inline uint8_t toColor(float a) {
+    return (uint8_t)(256 * clamp(a, 0.0, 0.999));
+}
+
+void imageToColor(int width, int height, uint8_t* dst, float* src)
+{
+    for (int i = 0; i < width * height * 3; i++) {
+        dst[i] = toColor(src[i]);
     }
 }

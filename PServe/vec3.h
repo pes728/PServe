@@ -14,6 +14,7 @@
 class vec3{
 public:
     vec3() : e{0, 0, 0} {}
+    vec3(double a) : e{ a, a, a } {}
     vec3(double e0, double e1, double e2) : e{e0, e1, e2} {}
 
     double x() const { return e[0]; }
@@ -35,6 +36,13 @@ public:
         e[0] *= t;
         e[1] *= t;
         e[2] *= t;
+        return *this;
+    }
+
+    vec3& operator *= (const vec3& v) {
+        e[0] *= v[0];
+        e[1] *= v[1];
+        e[2] *= v[2];
         return *this;
     }
 

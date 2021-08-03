@@ -25,7 +25,13 @@
     <ClCompile Include="vec3.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="World.cpp">
+    <ClCompile Include="hittable_list.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="aabb.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="bvh_node.cpp">
       <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -75,7 +81,16 @@
     <ClInclude Include="vec3.h">
       <Filter>headers</Filter>
     </ClInclude>
-    <ClInclude Include="World.h">
+    <ClInclude Include="hittable_list.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="bvh_node.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="texture.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameBuffer.h">
       <Filter>headers</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,4 +1,4 @@
- v//
+//
 //  aabb.h
 //  PRender
 //
@@ -11,6 +11,7 @@
 
 #include "common.h"
 
+
 class aabb{
 public:
     aabb(){}
@@ -21,9 +22,11 @@ public:
 
     inline bool hit(const ray& r, double tmin, double tmax) const;
     
+
     vec3 _min, _max;
 };
 
+aabb surrounding_box(aabb box0, aabb box1);
 
 inline bool aabb::hit(const ray& r, double tmin, double tmax) const {
     for (int a = 0; a < 3; a++) {
@@ -39,5 +42,7 @@ inline bool aabb::hit(const ray& r, double tmin, double tmax) const {
     }
     return true;
 }
+
+
 
 #endif /* aabb_h */

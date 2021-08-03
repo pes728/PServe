@@ -29,7 +29,7 @@ bool moving_sphere::hit(
             rec.p = r.at(rec.t);
             auto outward_normal = (rec.p - center(r.time())) / radius;
             rec.set_face_normal(r, outward_normal);
-            rec.mat = mat_ptr;
+            rec.mat = mat;
             return true;
         }
 
@@ -39,9 +39,21 @@ bool moving_sphere::hit(
             rec.p = r.at(rec.t);
             auto outward_normal = (rec.p - center(r.time())) / radius;
             rec.set_face_normal(r, outward_normal);
-            rec.mat = mat_ptr;
+            rec.mat = mat;
             return true;
         }
     }
     return false;
+}
+
+bool moving_sphere::bounding_box(double time0, double time, aabb& outputBox) const
+{
+    aabb box0(
+        center(time0) - vec3(radius, radius, radius),
+        center(time0) + vec3(radius, radius, radius));
+    aabb box1(
+        center(time1) - vec3(radius, radius, radius),
+        center(time1) + vec3(radius, radius, radius));
+    outputBox = surrounding_box(box0, box1);
+    return true;
 }
