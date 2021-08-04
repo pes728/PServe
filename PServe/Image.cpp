@@ -37,9 +37,10 @@ inline uint8_t toColor(float a) {
     return (uint8_t)(256 * clamp(a, 0.0, 0.999));
 }
 
-void imageToColor(int width, int height, uint8_t* dst, float* src)
+void imageToColor(int width, int height, uint8_t* dst, float* src, bool remap)
 {
     for (int i = 0; i < width * height * 3; i++) {
-        dst[i] = toColor(src[i]);
+        dst[i] = remap ? toColor((src[i] + 1) / 2) : toColor(src[i]);
+            
     }
 }

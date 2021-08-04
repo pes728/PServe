@@ -42,7 +42,7 @@ hittable_list random_scene() {
 
                 if (choose_mat < 0.8) {
                     // diffuse
-                    auto solid = make_shared<solid_color>(vec3(random_double()));
+                    auto solid = make_shared<solid_color>(vec3(random_double(), random_double(), random_double()));
                     sphere_material = make_shared<lambertian>(solid);
                     auto center2 = center + vec3(0, random_double(0,.5), 0);
                     world.add(make_shared<moving_sphere>(center, center2, 0.0, 1.0, 0.2, sphere_material));
@@ -87,28 +87,32 @@ Frame ray_colorR(const ray& r, const hittable& world, int depth) {
     // If we've exceeded the ray bounce limit, no more light is gathered.
     if (depth <= 0) {
         frame.color = vec3(0, 0, 0);
+        frame.normal = vec3(0, 0, 0);
         return frame;
     }
 
     // If the ray hits nothing, return the background color.
     if (!world.hit(r, 0.001, infinity, rec)) {
-        frame.color = Background(r);
+        frame.color = frame.albedo = Background(r);
+        frame.normal = unit_vector(-r.dir);
         return frame;
     }
 
     ray scattered;
     vec3 attenuation;
-
+    
     if (!rec.mat->scatter(r, rec, attenuation, scattered)) {
         frame.color = vec3(0, 0, 0);
+        frame.normal = rec.normal;
         return frame;
     }
 
     Frame f = ray_colorR(scattered, world, depth - 1);
 
-    frame.color =  attenuation * f.color;
+    frame.normal = rec.normal;
+    frame.albedo = attenuation;
+    frame.color = attenuation * f.color;
     return frame;
-    
 }
 
 /*Frame ray_colorI(const ray& r, const hittable& world, int max_depth) {
@@ -150,17 +154,24 @@ Frame ray_colorR(const ray& r, const hittable& world, int depth) {
 
 
 void render_pixel(int x, int y, int image_width, int image_height, int samples, int max_depth, Camera c, const hittable& world, FrameBuffer* frame){
-    vec3 pixel(0,0,0);
+    vec3 color(0, 0, 0);
+    vec3 albedo(0, 0, 0);
+    vec3 normal(0, 0, 0);
     for (int s = 0; s < samples; s++) {
         auto u = (x + random_double()) / (image_width-1);
         auto v = (y + random_double()) / (image_height-1);
         ray r = c.get_ray(u, v);
-        //recusive
-        //pixel += ray_colorR(r, world, max_depth);
-        //iterative
-        pixel += ray_colorR(r, world, max_depth).color;
+
+
+        Frame f = ray_colorR(r, world, max_depth);
+        color += f.color;
+        albedo += f.albedo;
+        normal += f.normal;
     }
-    setPixel(x, y, image_width, image_height, pixel / samples, frame->color, true);
+
+    setPixel(x, y, image_width, image_height, color / samples, frame->color, true);
+    setPixel(x, y, image_width, image_height, albedo / samples, frame->albedo, true);
+    setPixel(x, y, image_width, image_height, unit_vector(normal / samples), frame->normal, true);
 }
 
 void thread_manager(int id, int jump_value, int image_width, int image_height, int samples, int max_depth, Camera c, const hittable& world, FrameBuffer* frame){

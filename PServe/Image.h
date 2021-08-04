@@ -20,6 +20,6 @@ void init(int width, int height, float* data, vec3 c);
 
 inline uint8_t toColor(float v);
 
-void imageToColor(int width, int height, uint8_t* dst, float* src);
+void imageToColor(int width, int height, uint8_t* dst, float* src, bool remap = false);
 
 #endif /* Image_hpp */
