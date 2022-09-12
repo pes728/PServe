@@ -7,3 +7,7 @@ Ability to create different materials for different objects i.e. Lambertian, Die
 Positionable Camera
 Multithreaded architecture
 Use of Intel's Open Image Denoiser to denoise image using albedo, normal, and noisy images.
+
+# Final Denoised Image
+![denoised image](https://github.com/pes728/PServe/blob/master/img/out.bmp)
+
