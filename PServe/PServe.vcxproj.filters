@@ -1,97 +1,105 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="headers">
-      <UniqueIdentifier>{8da4a941-bc72-473e-b10a-0b0a51c35ed9}</UniqueIdentifier>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="source">
-      <UniqueIdentifier>{1d4a81cc-c49b-4e4e-8991-b9ab9af3b4dc}</UniqueIdentifier>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Image.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
-    <ClCompile Include="moving_sphere.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
-    <ClCompile Include="Render.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
-    <ClCompile Include="Sphere.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
-    <ClCompile Include="vec3.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
-    <ClCompile Include="hittable_list.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
-    <ClCompile Include="aabb.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
-    <ClCompile Include="bvh_node.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="aabb.h">
-      <Filter>headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Color.h">
-      <Filter>headers</Filter>
-    </ClInclude>
-    <ClInclude Include="common.h">
-      <Filter>headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Hittable.h">
-      <Filter>headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Image.h">
-      <Filter>headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Material.h">
-      <Filter>headers</Filter>
-    </ClInclude>
-    <ClInclude Include="moving_sphere.h">
-      <Filter>headers</Filter>
-    </ClInclude>
-    <ClInclude Include="PMath.h">
-      <Filter>headers</Filter>
-    </ClInclude>
-    <ClInclude Include="ray.h">
-      <Filter>headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Render.h">
-      <Filter>headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Sphere.h">
-      <Filter>headers</Filter>
-    </ClInclude>
-    <ClInclude Include="stb_image.h">
-      <Filter>headers</Filter>
-    </ClInclude>
-    <ClInclude Include="stb_write.h">
-      <Filter>headers</Filter>
+    <ClInclude Include="texture.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="vec3.h">
-      <Filter>headers</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="hittable_list.h">
-      <Filter>headers</Filter>
+    <ClInclude Include="aabb.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="bvh_node.h">
-      <Filter>headers</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="texture.h">
-      <Filter>headers</Filter>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Color.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="common.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FrameBuffer.h">
-      <Filter>headers</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Hittable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hittable_list.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="moving_sphere.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PMath.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ray.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Render.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sphere.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_write.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="aabb.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="bvh_node.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="hittable_list.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Image.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moving_sphere.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Render.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sphere.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vec3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

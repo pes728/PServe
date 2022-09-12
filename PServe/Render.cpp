@@ -187,7 +187,7 @@ void render(int image_width, int image_height, int samples, int max_depth, Camer
     std::clock_t start = std::clock();
     
     if (MULTI_THREADED) {
-        const auto numThreads = std::thread::hardware_concurrency();
+        const unsigned int numThreads = 16;
         std::thread t[numThreads];
 
         std::cout << "Beginning\nTotal threads: " << numThreads << std::endl;
