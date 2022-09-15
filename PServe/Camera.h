@@ -12,6 +12,7 @@
 
 class Camera{
 public:
+    Camera() {}
     Camera(vec3 lookfrom, vec3 lookat, vec3 vup, double vfov, double aspect_ratio, double aperture, double focus_dist, double t0, double t1){
         auto theta = degrees_to_radians(vfov);
         auto h = tan(theta/2);

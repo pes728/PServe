@@ -14,7 +14,7 @@
 
 class material;
 
-class hit_record{
+struct hit_record{
 public:
     vec3 p;
     vec3 normal;

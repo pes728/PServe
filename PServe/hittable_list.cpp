@@ -6,8 +6,6 @@ bool hittable_list::hit(const ray& r, double t_min, double t_max, hit_record& re
     auto hit_anything = false;
     auto closest_so_far = t_max;
 
-    std::cout << objects.size() << std::endl;
-
     for (int i = 0; i < objects.size(); i++) {
         if (objects[i]->hit(r, t_min, closest_so_far, temp_rec)) {
             hit_anything = true;

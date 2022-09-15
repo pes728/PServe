@@ -80,7 +80,7 @@ vec3 Background(const ray& r) {
     return (1.0 - t) * vec3(1.0, 1.0, 1.0) + t * vec3(0.5, 0.7, 1.0);
 }
 
-Frame ray_colorR(const ray& r, const hittable& world, int depth) {
+Frame ray_colorR(const ray& r, hittable* world, int depth) {
     hit_record rec;
 
     Frame frame;
@@ -92,7 +92,7 @@ Frame ray_colorR(const ray& r, const hittable& world, int depth) {
     }
 
     // If the ray hits nothing, return the background color.
-    if (!world.hit(r, 0.001, infinity, rec)) {
+    if (!world->hit(r, 0.001, infinity, rec)) {
         frame.color = frame.albedo = Background(r);
         frame.normal = unit_vector(-r.dir);
         return frame;
@@ -113,6 +113,61 @@ Frame ray_colorR(const ray& r, const hittable& world, int depth) {
     frame.albedo = attenuation;
     frame.color = attenuation * f.color;
     return frame;
+}
+
+void denoise(RenderSettings settings, std::atomic_bool* finsihedDenoising)
+{
+    //setup oidn
+    oidn::DeviceRef device = oidn::newDevice();
+    device.commit();
+
+    oidn::FilterRef filter = device.newFilter("RT");
+
+    float* outColor = (float*)malloc(settings.width * settings.height * 3 * sizeof(float));
+    uint8_t* image = (uint8_t*)malloc(settings.width * settings.height * 3 * sizeof(uint8_t));
+
+    std::cout << "denoising" << std::endl;
+
+    // Create a filter for denoising a beauty (color) image using prefiltered auxiliary images too
+    filter.setImage("color", settings.framebuffer->color, oidn::Format::Float3, settings.width, settings.height); // beauty
+    filter.setImage("albedo", settings.framebuffer->albedo, oidn::Format::Float3, settings.width, settings.height); // auxiliary
+    filter.setImage("normal", settings.framebuffer->normal, oidn::Format::Float3, settings.width, settings.height); // auxiliary
+    filter.setImage("output", outColor, oidn::Format::Float3, settings.width, settings.height); // denoised beauty
+    filter.set("hdr", true); // beauty image is HDR
+    filter.set("cleanAux", true); // auxiliary images will be prefiltered
+    filter.commit();
+
+    // Create a separate filter for denoising an auxiliary albedo image (in-place)
+    oidn::FilterRef albedoFilter = device.newFilter("RT"); // same filter type as for beauty
+    albedoFilter.setImage("albedo", settings.framebuffer->albedo, oidn::Format::Float3, settings.width, settings.height);
+    albedoFilter.setImage("output", settings.framebuffer->albedo, oidn::Format::Float3, settings.width, settings.height);
+    albedoFilter.commit();
+
+    // Create a separate filter for denoising an auxiliary normal image (in-place)
+    oidn::FilterRef normalFilter = device.newFilter("RT"); // same filter type as for beauty
+    normalFilter.setImage("normal", settings.framebuffer->normal, oidn::Format::Float3, settings.width, settings.height);
+    normalFilter.setImage("output", settings.framebuffer->normal, oidn::Format::Float3, settings.width, settings.height);
+    normalFilter.commit();
+
+    // Prefilter the auxiliary images
+    albedoFilter.execute();
+    normalFilter.execute();
+
+    // Filter the beauty image
+    filter.execute();
+
+    const char* errorMessage;
+    if (device.getError(errorMessage) != oidn::Error::None)
+        std::cout << "Error: " << errorMessage << std::endl;
+
+    for (unsigned int i = 0; i < settings.width * settings.height * 3; i++) {
+        settings.beauty[i] = outColor[i];
+    }
+
+    finsihedDenoising->store(true);
+    //shutdown
+    free(outColor);
+    free(image);
 }
 
 /*Frame ray_colorI(const ray& r, const hittable& world, int max_depth) {
@@ -153,7 +208,7 @@ Frame ray_colorR(const ray& r, const hittable& world, int depth) {
 
 
 
-void render_pixel(int x, int y, int image_width, int image_height, int samples, int max_depth, Camera c, const hittable& world, FrameBuffer* frame){
+void render_pixel(int x, int y, int image_width, int image_height, int samples, int max_depth, Camera c, hittable* world, FrameBuffer* frame){
     vec3 color(0, 0, 0);
     vec3 albedo(0, 0, 0);
     vec3 normal(0, 0, 0);
@@ -174,7 +229,7 @@ void render_pixel(int x, int y, int image_width, int image_height, int samples, 
     setPixel(x, y, image_width, image_height, unit_vector(normal / samples), frame->normal, true);
 }
 
-void thread_manager(int id, int jump_value, int image_width, int image_height, int samples, int max_depth, Camera c, const hittable& world, FrameBuffer* frame){
+void thread_manager(int id, int jump_value, int image_width, int image_height, int samples, int max_depth, Camera c, hittable* world, FrameBuffer* frame){
     int index = id;
     while(index < image_width * image_height){
         render_pixel(index % image_width , index / image_width, image_width, image_height, samples, max_depth, c, world, frame);
@@ -183,7 +238,7 @@ void thread_manager(int id, int jump_value, int image_width, int image_height, i
     std::cout << "Thread " << id << ": DONE" << std::endl;
 }
 
-void render(int image_width, int image_height, int samples, int max_depth, Camera c, const hittable& world, FrameBuffer* frame){
+void render(RenderSettings settings, std::atomic_bool* finished){
     std::clock_t start = std::clock();
     
     if (MULTI_THREADED) {
@@ -192,17 +247,19 @@ void render(int image_width, int image_height, int samples, int max_depth, Camer
 
         std::cout << "Beginning\nTotal threads: " << numThreads << std::endl;
 
-        for (int i = 0; i < numThreads; i++) t[i] = std::thread(thread_manager, i, numThreads, image_width, image_height, samples, max_depth, c, std::ref(world), frame);
+        for (int i = 0; i < numThreads; i++) t[i] = std::thread(thread_manager, i, numThreads, settings.width, settings.height, settings.samples, settings.max_depth, settings.cam, settings.world, settings.framebuffer);
         for (int i = 0; i < numThreads; i++) t[i].join();
     }
     else {
-        for (int y = 0; y < image_height; y++) {
+        for (unsigned int y = 0; y < settings.height; y++) {
             std::cout << "Scanlines completed: " << y << '\r' << std::flush;
-            for (int x = 0; x < image_width; x++) {
-                render_pixel(x, y, image_width, image_height, samples, max_depth, c, world, frame);
+            for (unsigned int x = 0; x < settings.width; x++) {
+                render_pixel(x, y, settings.width, settings.height, settings.samples, settings.max_depth, settings.cam, settings.world, settings.framebuffer);
             }
         }
     }
+
+    finished->store(true);
     std::cout << "ALL DONE!" << std::endl;
     std::clock_t end = std::clock();
     std::cout << std::fixed << std::setprecision(2) << "CPU time used: "
