@@ -99,10 +99,10 @@ void Window::begin() {
             renderThread = std::thread(render, settings, finishedRendering);
         }
             
-        if (ImGui::Button("Denoise") && !finishedRendering->load() && texUploaded) {
+        /*if (ImGui::Button("Denoise") && !finishedRendering->load() && texUploaded) {
             renderThread = std::thread(denoise, settings, finishedDenoising);
             uploadImage(true);
-        }
+        }*/
 
         ImGui::Checkbox("Save All", &saveAll);
 
